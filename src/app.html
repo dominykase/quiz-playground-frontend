@@ -1,21 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="cupcake">
 
 <head>
 	<meta charset="utf-8" />
 	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 	<meta name="viewport" content="width=device-width" />
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		html,
+		body {
+			height: 100%;
+			width: 100%;
+		}
+
+		#root {
+			width: 100%;
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+		}
+	</style>
 	%sveltekit.head%
 </head>
-<style>
-	#root {
-		display: flex;
-		justify-content: center;
-	}
-</style>
 
 <body data-sveltekit-preload-data="hover">
-	<div id="root" style="display: contents">%sveltekit.body%</div>
+	<div id="root">%sveltekit.body%</div>
 </body>
 
 </html>
