@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { PUBLIC_API_URL } from '$env/static/public';
+	import QuizOverviewComponent from '$lib/components/QuizOverviewComponent.svelte';
 	import type { Quiz } from '$lib/types/Quiz';
 	import axios from 'axios';
 
@@ -23,5 +24,5 @@
 {#if quiz == undefined}
 	<div class="spinner" />
 {:else}
-	<p>{JSON.stringify(quiz)}</p>
+	<QuizOverviewComponent {quiz} />
 {/if}

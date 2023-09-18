@@ -1,7 +1,15 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import type { Quiz } from '$lib/types/Quiz';
+	import { onMount } from 'svelte';
 
 	export let quizzes: Quiz[];
+
+	const editQuizRedirect = (id: number) => {
+		if (browser) {
+			window.location.href = `/quiz/${id}`;
+		}
+	};
 </script>
 
 <div class="mt-20 h-full w-8/12 flex flex-col">
@@ -23,6 +31,10 @@
 					>
 				</div>
 				<div class="flex items-center">
+					<button
+						class="btn-neutral bg-slate-200 text-black p-3 mt-3 mr-3 rounded-xl hover:btn-active hover:text-white transition"
+						on:click={() => editQuizRedirect(quiz.id)}>Edit</button
+					>
 					<button
 						class="btn-neutral bg-slate-200 text-black p-3 mt-3 mr-3 rounded-xl hover:btn-active hover:text-white transition"
 						>Take this quiz!</button
