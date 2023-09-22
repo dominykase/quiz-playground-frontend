@@ -1,17 +1,38 @@
 <script lang="ts">
 	import type { Quiz } from '$lib/types/Quiz';
 	import axios from 'axios';
-	import CardTitle from './reusable/CardTitle.svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import toast, { Toaster } from 'svelte-french-toast';
 
 	export let quiz: Quiz;
+	let createCategoryName: string = '';
 	let editCategoryId: number = 0;
 	let editCategoryName: string = '';
 
 	const populateEditCategory = (id: number, name: string) => {
 		editCategoryId = id;
 		editCategoryName = name;
+	};
+
+	const sendCreateCategoryRequest = () => {
+		axios({
+			method: 'post',
+			url: PUBLIC_API_URL + `/quiz/${quiz.id}/category`,
+			data: {
+				name: createCategoryName
+			}
+		}).then((res) => {
+			if (res.status == 200) {
+				quiz = res.data;
+				const button = document.getElementById(
+					'create_category_modal_close_button'
+				) as HTMLButtonElement;
+				button.click();
+				toast.success('Category has been created!');
+			} else {
+				toast.error('Something went wrong :(');
+			}
+		});
 	};
 
 	const sendEditCategoryRequest = () => {
@@ -71,23 +92,52 @@
 	<div class="py-5 flex flex-row w-full h-94">
 		<div class="card-normal bg-white rounded-xl p-5 w-1/3">
 			<div class="card-normal bg-white rounded-xl mr-3">
-				<div class="card-title">
+				<div class="card-title flex flex-row justify-between">
 					<h1 class="text-3xl bg-accent rounded-full p-2">Categories</h1>
+					<button
+						class="btn btn-md btn-circle text-2xl"
+						onclick="create_category_modal.showModal()"
+						on:click={() => (createCategoryName = '')}>+</button
+					>
+					<dialog id="create_category_modal" class="modal">
+						<div class="modal-box">
+							<form method="dialog">
+								<button
+									id="create_category_modal_close_button"
+									class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+								>
+							</form>
+							<h3 class="font-bold text-lg mb-3">Create category</h3>
+							<input
+								type="text"
+								name="category-name"
+								bind:value={createCategoryName}
+								class="p-2 rounded-lg"
+								placeholder="Category name"
+							/>
+							<button
+								on:click={sendCreateCategoryRequest}
+								class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+							>
+								Create ;)
+							</button>
+						</div>
+					</dialog>
 				</div>
-				<div class="card-body">
+				<div class="card-body p-0">
 					{#each quiz.categories as category}
 						<div class="w-full bg-secondary rounded-full p-3 flex flex-row justify-between">
 							<div>{category.name}</div>
 							<div>
 								<button
-									class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+									class="btn-neutral bg-slate-200 text-black p-1 rounded-md hover:btn-active hover:text-white transition"
 									onclick={'edit_category_modal_' + category.id.toString() + '.showModal()'}
 									on:click={() => populateEditCategory(category.id, category.name)}
 								>
 									Edit
 								</button>
 								<button
-									class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+									class="btn-neutral bg-slate-200 text-black p-1 rounded-md hover:btn-active hover:text-white transition"
 									onclick={'delete_category_modal_' + category.id.toString() + '.showModal()'}
 									on:click={() => populateEditCategory(category.id, category.name)}
 								>
