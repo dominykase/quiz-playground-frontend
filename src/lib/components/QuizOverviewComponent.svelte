@@ -1,7 +1,146 @@
 <script lang="ts">
 	import type { Quiz } from '$lib/types/Quiz';
+	import axios from 'axios';
+	import CardTitle from './reusable/CardTitle.svelte';
+	import { PUBLIC_API_URL } from '$env/static/public';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	export let quiz: Quiz;
+	let editCategoryId: number = 0;
+	let editCategoryName: string = '';
+
+	const populateEditCategory = (id: number, name: string) => {
+		editCategoryId = id;
+		editCategoryName = name;
+	};
+
+	const sendEditCategoryRequest = () => {
+		axios({
+			method: 'patch',
+			url: PUBLIC_API_URL + `/quiz/${quiz.id}/category`,
+			data: {
+				id: editCategoryId,
+				name: editCategoryName
+			}
+		}).then((res) => {
+			if (res.status == 200) {
+				quiz = res.data;
+				const button = document.getElementById(
+					'edit_category_modal_close_button' + editCategoryId.toString()
+				) as HTMLButtonElement;
+				button.click();
+				toast.success('Category has been edited!');
+			} else {
+				toast.error('Something went wrong :(');
+			}
+		});
+	};
+
+	const sendDeleteCategoryRequest = () => {
+		axios({
+			method: 'delete',
+			url: PUBLIC_API_URL + `/category/${editCategoryId}`
+		}).then((res) => {
+			if (res.status == 204) {
+				const button = document.getElementById(
+					'delete_category_modal_close_button' + editCategoryId.toString()
+				) as HTMLButtonElement;
+				button.click();
+				toast.success('Category has been deleted :O');
+				let tempQuiz = quiz;
+				tempQuiz.categories = [
+					...tempQuiz.categories.filter((category) => category.id !== editCategoryId)
+				];
+				quiz = tempQuiz;
+			} else {
+				toast.error('Something went wrong :(');
+			}
+		});
+	};
+
+	console.log(quiz);
 </script>
 
-<div class="w-3/4 h-full" />
+<div class="w-3/4 h-full flex flex-col">
+	<div class="card-normal bg-white rounded-xl mt-10 p-5">
+		<div class="card-title">
+			<h1 class="text-3xl bg-accent rounded-full p-2">{quiz.name}</h1>
+		</div>
+		<div class="card-body p-0">{quiz.description}</div>
+	</div>
+	<div class="py-5 flex flex-row w-full h-94">
+		<div class="card-normal bg-white rounded-xl p-5 w-1/3">
+			<div class="card-normal bg-white rounded-xl mr-3">
+				<div class="card-title">
+					<h1 class="text-3xl bg-accent rounded-full p-2">Categories</h1>
+				</div>
+				<div class="card-body">
+					{#each quiz.categories as category}
+						<div class="w-full bg-secondary rounded-full p-3 flex flex-row justify-between">
+							<div>{category.name}</div>
+							<div>
+								<button
+									class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+									onclick={'edit_category_modal_' + category.id.toString() + '.showModal()'}
+									on:click={() => populateEditCategory(category.id, category.name)}
+								>
+									Edit
+								</button>
+								<button
+									class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+									onclick={'delete_category_modal_' + category.id.toString() + '.showModal()'}
+									on:click={() => populateEditCategory(category.id, category.name)}
+								>
+									Delete
+								</button>
+							</div>
+						</div>
+						<dialog id={'edit_category_modal_' + category.id.toString()} class="modal">
+							<div class="modal-box">
+								<form method="dialog">
+									<button
+										id={'edit_category_modal_close_button' + category.id.toString()}
+										class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+									>
+								</form>
+								<h3 class="font-bold text-lg mb-3">Edit category</h3>
+								<label for="category-name">Category name: </label>
+								<input
+									type="text"
+									name="category-name"
+									bind:value={editCategoryName}
+									class="p-2 rounded-lg"
+								/>
+								<button
+									on:click={sendEditCategoryRequest}
+									class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+								>
+									Submit
+								</button>
+							</div>
+						</dialog>
+						<dialog id={'delete_category_modal_' + category.id.toString()} class="modal">
+							<div class="modal-box">
+								<form method="dialog">
+									<button
+										id={'delete_category_modal_close_button' + category.id.toString()}
+										class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+									>
+								</form>
+								<h3 class="font-bold text-lg mb-3">Are you sure?</h3>
+								<div>Category will be removed from all quiz answers as well.</div>
+								<button
+									on:click={sendDeleteCategoryRequest}
+									class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+								>
+									Delete
+								</button>
+							</div>
+						</dialog>
+					{/each}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<Toaster />
