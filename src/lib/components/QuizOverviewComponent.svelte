@@ -6,13 +6,20 @@
 
 	export let quiz: Quiz;
 	let createCategoryName: string = '';
-	let editCategoryId: number = 0;
+	let editCategoryId: number = -1;
 	let editCategoryName: string = '';
+	let editQuestionId: number = -1;
+	let editQuestionText: string = '';
 
 	const populateEditCategory = (id: number, name: string) => {
 		editCategoryId = id;
 		editCategoryName = name;
 	};
+
+	const populateEditQuestion = (id: number, text: string) => {
+		editQuestionId = id;
+		editQuestionText = text;
+	}
 
 	const sendCreateCategoryRequest = () => {
 		axios({
@@ -78,6 +85,24 @@
 			}
 		});
 	};
+
+	const sendUpdateQuestionRequest = () => {
+		axios({
+			method: "patch",
+			url: PUBLIC_API_URL + `/quiz/${quiz.id}/question`,
+			data: {
+				id: editQuestionId,
+				text: editQuestionText,
+			}
+		}).then((res) => {
+			if (res.status == 200) {
+				toast.success('Question text has been updated!');
+				quiz = res.data;
+			} else {
+				toast.error('Something went wrong :(');
+			}
+		});
+	}
 
 	console.log(quiz);
 </script>
@@ -201,12 +226,44 @@
 					<h1 class="text-3xl rounded-full p-2">Questions</h1>
 				</div>
 				{#each quiz.questions as question}
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<div
 						class="w-full bg-secondary hover:bg-secondary-focus transition hover:cursor-pointer rounded-full p-3"
+						onclick={'view_question_modal' + question.id + ".showModal()"}
+						on:click={() => populateEditQuestion(question.id, question.text)}
 					>
 						<div>{question.text}</div>
 					</div>
-				{/each}
+					<dialog id={'view_question_modal' + question.id.toString()} class="modal">
+					<div class="modal-box w-11/12 max-w-5xl">
+						<form method="dialog">
+							<button
+								id={'view_question_modal_close_button' + question.id.toString()}
+								class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+							>
+						</form>
+						<div class="text-lg font-bold">Question</div>
+						<div class="w-full flex flex-row">
+							<input class="ml-5 p-2 rounded-lg" type="text" bind:value={editQuestionText}/>
+							<button
+								on:click={sendUpdateQuestionRequest}
+								class="ml-3 btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+							>
+								Submit
+							</button>
+						</div>
+						<div class="text-lg font-bold">Answers</div>
+						{#each question.answers as answer}
+							<div
+								class="w-fit bg-secondary hover:bg-secondary-focus transition hover:cursor-pointer rounded-full p-3 my-1 ml-5"
+							>
+								<div>{answer.text}</div>
+							</div>
+						{/each}
+					</div>
+					</dialog>
+					{/each}
 			</div>
 		</div>
 	</div>
