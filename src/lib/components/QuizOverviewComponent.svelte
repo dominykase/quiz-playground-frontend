@@ -3,13 +3,21 @@
 	import axios from 'axios';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import toast, { Toaster } from 'svelte-french-toast';
+	import type { Answer } from '$lib/types/Answer';
+	import type { Question } from '$lib/types/Question';
 
 	export let quiz: Quiz;
 	let createCategoryName: string = '';
+
 	let editCategoryId: number = -1;
 	let editCategoryName: string = '';
+
 	let editQuestionId: number = -1;
 	let editQuestionText: string = '';
+
+	let isCreateAnswerView: boolean = false;
+	let createAnswerText: string = '';
+	let editAnswer: Answer|undefined = undefined;
 
 	const populateEditCategory = (id: number, name: string) => {
 		editCategoryId = id;
@@ -102,6 +110,26 @@
 				toast.error('Something went wrong :(');
 			}
 		});
+	}
+
+	const sendCreateAnswerRequest = () => {
+		axios({
+			method: "post",
+			url: PUBLIC_API_URL + `/question/${editQuestionId}/answer`,
+			data: {
+				text: createAnswerText,
+			}
+		}).then((res) => {
+			if (res.status == 200) {
+				toast.success('Answer has been created!');
+				quiz = res.data;
+				isCreateAnswerView = false;
+				editAnswer = quiz.questions.find((question: Question) => question.id === editQuestionId)
+					?.answers.find((answer: Answer) => answer.text == createAnswerText);
+			} else {
+				toast.error('Something went wrong :(');
+			}
+		})
 	}
 
 	console.log(quiz);
@@ -236,32 +264,66 @@
 						<div>{question.text}</div>
 					</div>
 					<dialog id={'view_question_modal' + question.id.toString()} class="modal">
-					<div class="modal-box w-11/12 max-w-5xl">
-						<form method="dialog">
-							<button
-								id={'view_question_modal_close_button' + question.id.toString()}
-								class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
-							>
-						</form>
-						<div class="text-lg font-bold">Question</div>
-						<div class="w-full flex flex-row">
-							<input class="ml-5 p-2 rounded-lg" type="text" bind:value={editQuestionText}/>
-							<button
-								on:click={sendUpdateQuestionRequest}
-								class="ml-3 btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
-							>
-								Submit
-							</button>
-						</div>
-						<div class="text-lg font-bold">Answers</div>
-						{#each question.answers as answer}
-							<div
-								class="w-fit bg-secondary hover:bg-secondary-focus transition hover:cursor-pointer rounded-full p-3 my-1 ml-5"
-							>
-								<div>{answer.text}</div>
+						<div class="modal-box w-11/12 max-w-5xl h-50">
+							<div class="flex flex-row w-full h-full">
+								<div class="w-1/2">
+									<form method="dialog">
+										<button
+											id={'view_question_modal_close_button' + question.id.toString()}
+											class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+										>
+									</form>
+									<div class="text-lg font-bold">Question</div>
+									<div class="w-full flex flex-row">
+										<input class="ml-5 p-2 rounded-lg" type="text" bind:value={editQuestionText}/>
+										<button
+											on:click={sendUpdateQuestionRequest}
+											class="ml-3 btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+										>
+											Submit
+										</button>
+									</div>
+									<div class="flex flex-row justify-start items-center py-2">
+										<div class="text-lg font-bold">Answers</div>
+										<button
+											class="btn ml-3 bg-slate-200 hover:bg-slate-300 transition btn-sm btn-circle text-2xl text-black border-none"
+											on:click={() => {
+												isCreateAnswerView = true;
+												createAnswerText = '';
+											}}>+</button
+										>
+									</div>
+									{#each question.answers as answer}
+										<!-- svelte-ignore a11y-click-events-have-key-events -->
+										<!-- svelte-ignore a11y-no-static-element-interactions -->
+										<div
+											class="w-fit bg-secondary hover:bg-secondary-focus transition hover:cursor-pointer rounded-full p-3 my-1 ml-5"
+											on:click={() => {
+												isCreateAnswerView = false;
+												editAnswer = answer;
+											}}	
+										>
+											<div>{answer.text}</div>
+										</div>
+									{/each}
+								</div>
+								<div class="w-1/2">
+									{#if isCreateAnswerView}
+										<div class="text-lg font-bold">Add new answer</div>
+										<input class="ml-5 p-2 rounded-lg" type="text" placeholder="Enter your answer :)" bind:value={createAnswerText}/>
+										<button
+											on:click={sendCreateAnswerRequest}
+											class="ml-3 btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+										>
+											Submit
+										</button>
+									{:else}
+										<div class="text-lg font-bold">{editAnswer?.text}</div>
+									{/if}
+								</div>
 							</div>
-						{/each}
-					</div>
+							
+						</div>
 					</dialog>
 					{/each}
 			</div>
