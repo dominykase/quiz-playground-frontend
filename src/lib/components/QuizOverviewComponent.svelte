@@ -48,7 +48,7 @@
 				toast.error('Something went wrong :(');
 			}
 		});
-	}
+	};
 
 	const sendEditCategoryRequest = () => {
 		axios({
