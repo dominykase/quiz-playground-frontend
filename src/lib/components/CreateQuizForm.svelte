@@ -2,12 +2,10 @@
 	import axios from 'axios';
 	import CardTitle from './reusable/CardTitle.svelte';
 	import toast, { Toaster } from 'svelte-french-toast';
-	import { onMount } from 'svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
 
 	let name: string = '';
 	let description: string = '';
-	let redirectAnchor: HTMLAnchorElement;
 
 	const submitQuiz = () => {
 		axios({
@@ -21,17 +19,13 @@
 			if ((res.status = 200)) {
 				toast.success('Your quiz is created.');
 				setTimeout(() => {
-					redirectAnchor.click();
+                    window.location.href = '/list';
 				}, 2500);
 			} else {
 				toast.error('Something went wrong.');
 			}
 		});
 	};
-
-	onMount(() => {
-		redirectAnchor = document.querySelector('a') as HTMLAnchorElement;
-	});
 </script>
 
 <div class="floating-animation card card-normal bg-secondary rounded-xl">
@@ -51,5 +45,4 @@
 		>
 	</div>
 </div>
-<a style="display: none" href="/">redirect to quiz list</a>
 <Toaster />
