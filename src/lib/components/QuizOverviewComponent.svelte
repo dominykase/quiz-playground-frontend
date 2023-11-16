@@ -1,4 +1,6 @@
 <script lang="ts">
+    import Fa from 'svelte-fa/src/fa.svelte';
+    import { faPen, faX } from '@fortawesome/free-solid-svg-icons';
 	import type { Quiz } from '$lib/types/Quiz';
 	import axios from 'axios';
 	import { PUBLIC_API_URL } from '$env/static/public';
@@ -254,7 +256,7 @@
                 <button
                     class="btn btn-error btn-sm btn-circle border-none"
                     onclick="delete_quiz_modal.showModal()"
-                >X</button>
+                ><Fa icon={faX} /></button>
 			</div>
 			<div>{quiz.description}</div> 
 		</div>
@@ -284,7 +286,7 @@
 					<div class="card-title flex flex-row justify-between">
 						<h1 class="text-3xl rounded-full p-2">Categories</h1>
 						<button
-							class="btn bg-slate-200 hover:bg-slate-300 transition btn-md btn-circle text-2xl text-black border-none"
+							class="btn btn-primary transition btn-md btn-circle text-2xl text-white border-none"
 							onclick="create_category_modal.showModal()"
 							on:click={() => (createCategoryName = '')}>+</button
 						>
@@ -308,30 +310,30 @@
 									on:click={sendCreateCategoryRequest}
 									class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
 								>
-									Create ;)
+									Create
 								</button>
 							</div>
 						</dialog>
 					</div>
 					{#each quiz.categories as category}
 						<div
-							class="w-full bg-secondary rounded-full p-3 flex flex-row justify-between items-center"
+							class="w-full bg-primary rounded-full p-3 flex flex-row justify-between items-center"
 						>
-							<div class="ml-2">{category.name}</div>
+							<div class="ml-2 text-white">{category.name}</div>
 							<div>
 								<button
-									class="btn-neutral bg-slate-200 rounded-full px-2 text-black p-1 hover:btn-active hover:text-white transition"
+									class="btn-neutral bg-slate-200 btn-circle btn-sm px-2 text-black p-1 hover:btn-active hover:text-white transition"
 									onclick={'edit_category_modal_' + category.id.toString() + '.showModal()'}
 									on:click={() => populateEditCategory(category.id, category.name)}
 								>
-									Edit
+								    <Fa icon={faPen} />	
 								</button>
 								<button
 									class="btn btn-error btn-sm btn-circle border-none ml-1"
 									onclick={'delete_category_modal_' + category.id.toString() + '.showModal()'}
 									on:click={() => populateEditCategory(category.id, category.name)}
 								>
-									X
+									<Fa icon={faX} />
 								</button>
 							</div>
 						</div>
@@ -411,7 +413,6 @@
                             on:click={sendCreateQuestionRequest}
                             class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
                         >
-                            Create
                         </button>
                     </div>
                 </dialog>
@@ -419,7 +420,7 @@
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<div
-						class="w-full bg-secondary hover:bg-secondary-focus transition hover:cursor-pointer rounded-full p-3 flex flex-row justify-between"
+						class="w-full bg-primary text-white hover:bg-secondary-focus transition hover:cursor-pointer rounded-full p-3 flex flex-row justify-between"
 						onclick={'view_question_modal' + question.id + '.showModal()'}
 						on:click={() => populateEditQuestion(question.id, question.text)}
 					>
@@ -428,7 +429,9 @@
                             class="btn btn-error btn-xs btn-circle border-none"
                             onclick={"delete_question_modal_" + question.id.toString() + ".showModal()"}
                             on:click={(e) => e.stopPropagation()}
-                        >X</button>
+                        >
+                            <Fa icon={faX} />
+                        </button>
 					</div>
                     <dialog id={'delete_question_modal_' + question.id.toString()} class="modal">
                         <div class="modal-box">
@@ -492,7 +495,7 @@
                                             <button
                                                 class="btn ml-8 btn-error btn-xs btn-circle border-none"
                                                 on:click={() => sendDeleteAnswerRequest(answer.id)}
-                                            >X</button> 
+                                            ><Fa icon={faX} /></button> 
 										</div>
 									{/each}
 								</div>
