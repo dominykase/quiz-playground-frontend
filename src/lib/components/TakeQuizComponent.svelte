@@ -4,6 +4,9 @@
 	import type { Quiz } from "$lib/types/Quiz";
     import type { Question } from "$lib/types/Question";
 	import { onMount } from "svelte";
+	import { PUBLIC_API_URL } from '$env/static/public';
+	import axios from 'axios';
+	import toast, { Toaster } from 'svelte-french-toast';
 
     export let quiz: Quiz;
 
@@ -29,12 +32,23 @@
     }
 
     $: isComplete = answers.every((answer) => answer.answerId !== -1)
-
-    $: {
-    console.log(quiz);
-    console.log(answers);
-    console.log(isComplete);
-    console.log(currentQuestionId == quiz.questions.length - 1);
+    
+    const sendCompleteQuizRequest = () => {
+        axios({
+            method: 'post',
+            url: PUBLIC_API_URL + '/question/answer',
+            data: {
+                quizId: quiz.id,
+                questionAnswers: answers,
+            }
+        }).then((res) => {
+            if (res.status = 204) {
+                toast.success('Quiz completed successfully!');
+            }
+        }).catch((err) => {
+            console.log(err);
+            toast.error('Something went wrong!');
+        });
     }
 </script>
 
@@ -47,7 +61,11 @@
             <Fa icon={faChevronLeft} />
         </button>
         {#if currentQuestionId == quiz.questions.length - 1 && isComplete}
-            <button class="btn btn-primary text-white text-lg rounded-full" style="text-transform: none;">
+            <button 
+                class="btn btn-primary text-white text-lg rounded-full" 
+                style="text-transform: none;"
+                on:click={sendCompleteQuizRequest}
+            >
                 Finish
             </button>
         {:else}
@@ -75,3 +93,4 @@
         {/each}
     </div>
 </div>
+<Toaster />
