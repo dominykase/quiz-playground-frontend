@@ -1,6 +1,6 @@
 <script lang="ts">
     import Fa from 'svelte-fa/src/fa.svelte';
-    import { faPen, faX } from '@fortawesome/free-solid-svg-icons';
+    import { faPen, faPlus, faX } from '@fortawesome/free-solid-svg-icons';
 	import type { Quiz } from '$lib/types/Quiz';
 	import axios from 'axios';
 	import { PUBLIC_API_URL } from '$env/static/public';
@@ -249,7 +249,7 @@
 </script>
 
 <div class="w-3/4 h-full flex flex-col">
-	<div class="card-normal bg-white rounded-xl mt-10 p-5">
+	<div class="card-normal bg-white border-solid border-t-4 border-primary mt-10 p-5">
 		<div class="card-body p-0">
 			<div class="card-title flex flex-row justify-between">
 				<h1 class="text-3xl rounded-full">{quiz.name}</h1>
@@ -265,7 +265,7 @@
                 <form method="dialog">
                     <button
                         id={'delete_quiz_modal_close_button'}
-                        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+                        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><Fa icon={faX} /></button
                     >
                 </form>
                 <h3 class="font-bold text-lg mb-3">Are you sure?</h3>
@@ -280,22 +280,24 @@
         </dialog>
 	</div>
 	<div class="py-5 flex flex-row w-full h-94">
-		<div class="card-normal bg-white rounded-xl p-5 w-1/3">
+		<div class="card-normal bg-white border-solid border-t-4 border-primary p-5 w-1/3">
 			<div class="card-normal bg-white rounded-xl mr-3">
 				<div class="card-body p-0">
 					<div class="card-title flex flex-row justify-between">
 						<h1 class="text-3xl rounded-full p-2">Categories</h1>
 						<button
-							class="btn btn-primary transition btn-md btn-circle text-2xl text-white border-none"
+							class="btn btn-primary transition btn-md btn-circle text-xl text-white border-none"
 							onclick="create_category_modal.showModal()"
-							on:click={() => (createCategoryName = '')}>+</button
-						>
+							on:click={() => (createCategoryName = '')}
+                        >
+                            <Fa icon={faPlus} />
+                        </button>
 						<dialog id="create_category_modal" class="modal">
 							<div class="modal-box">
 								<form method="dialog">
 									<button
 										id="create_category_modal_close_button"
-										class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+										class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><Fa icon={faX} /></button
 									>
 								</form>
 								<h3 class="font-bold text-lg mb-3">Create category</h3>
@@ -303,13 +305,14 @@
 									type="text"
 									name="category-name"
 									bind:value={createCategoryName}
-									class="p-2 rounded-lg"
+                                    class="w-full p-2 border-2 border-solid border-primary rounded-lg"
 									placeholder="Category name"
 								/>
 								<button
 									on:click={sendCreateCategoryRequest}
-									class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
-								>
+                                    class="w-full mt-2 btn btn-primary text-white text-lg p-2 rounded-lg hover:btn-active transition"
+                                    style="text-transform: none;"
+                                >
 									Create
 								</button>
 							</div>
@@ -319,7 +322,7 @@
 						<div
 							class="w-full bg-primary rounded-full p-3 flex flex-row justify-between items-center"
 						>
-							<div class="ml-2 text-white">{category.name}</div>
+							<div class="ml-2 text-white font-bold text-lg">{category.name}</div>
 							<div>
 								<button
 									class="btn-neutral bg-slate-200 btn-circle btn-sm px-2 text-black p-1 hover:btn-active hover:text-white transition"
@@ -342,20 +345,20 @@
 								<form method="dialog">
 									<button
 										id={'edit_category_modal_close_button' + category.id.toString()}
-										class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+										class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><Fa icon={faX} /></button
 									>
 								</form>
-								<h3 class="font-bold text-lg mb-3">Edit category</h3>
-								<label for="category-name">Category name: </label>
+								<h3 class="font-bold text-lg">Edit category</h3>
 								<input
 									type="text"
 									name="category-name"
 									bind:value={editCategoryName}
-									class="p-2 rounded-lg"
+									class="p-2 my-2 rounded-lg text-xl font-bold w-full border-2 border-solid border-primary"
 								/>
 								<button
 									on:click={sendEditCategoryRequest}
-									class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+									class="w-full btn btn-primary text-white p-2 rounded-lg hover:btn-primary-focus"
+                                    style="text-transform: none;"
 								>
 									Submit
 								</button>
@@ -366,7 +369,7 @@
 								<form method="dialog">
 									<button
 										id={'delete_category_modal_close_button' + category.id.toString()}
-										class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+										class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><Fa icon={faX} /></button
 									>
 								</form>
 								<h3 class="font-bold text-lg mb-3">Are you sure?</h3>
@@ -383,36 +386,39 @@
 				</div>
 			</div>
 		</div>
-		<div class="card-normal bg-white rounded-xl w-2/3 h-94 ml-5 p-5">
+		<div class="card-normal bg-white border-solid border-t-4 border-primary w-2/3 h-94 ml-5 p-5">
 			<div class="card-body p-0">
 				<div class="card-title flex flex-row justify-between">
 					<h1 class="text-3xl rounded-full p-2">Questions</h1>
                     <button
-                        class="btn bg-slate-200 hover:bg-slate-300 transition btn-md btn-circle text-2xl text-black border-none"
+                        class="btn btn-primary transition btn-md btn-circle text-xl text-white border-none"
                         onclick="create_question_modal.showModal()"
                         on:click={() => (createQuestionName = '')}
-                    >+</button>
+                    >
+                        <Fa icon={faPlus} />
+                    </button>
 				</div>
                 <dialog id="create_question_modal" class="modal">
                     <div class="modal-box">
                         <form method="dialog">
                             <button
                                 id="create_question_modal_close_button"
-                                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
-                            >
+                                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><Fa icon={faX} /></button>
                         </form>
-                        <h3 class="font-bold text-lg mb-3">Create category</h3>
+                        <h3 class="font-bold text-lg mb-3">Create question</h3>
                         <input
                             type="text"
                             name="question-name"
                             bind:value={createQuestionName}
-                            class="p-2 rounded-lg"
+                            class="w-full p-2 border-2 border-solid border-primary rounded-lg text-xl font-bold"
                             placeholder="Question name"
                         />
                         <button
                             on:click={sendCreateQuestionRequest}
-                            class="btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+                            class="w-full mt-2 btn btn-primary text-white text-lg p-2 rounded-lg hover:btn-active transition"
+                            style="text-transform: none;"
                         >
+                            Create
                         </button>
                     </div>
                 </dialog>
@@ -420,13 +426,13 @@
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<div
-						class="w-full bg-primary text-white hover:bg-secondary-focus transition hover:cursor-pointer rounded-full p-3 flex flex-row justify-between"
+						class="w-full bg-primary text-white hover:bg-primary-focus hover:cursor-pointer rounded-full p-3 flex flex-row justify-between items-center"
 						onclick={'view_question_modal' + question.id + '.showModal()'}
 						on:click={() => populateEditQuestion(question.id, question.text)}
 					>
-						<div>{question.text}</div>
+						<div class="ml-2 text-lg font-bold">{question.text}</div>
                         <button
-                            class="btn btn-error btn-xs btn-circle border-none"
+                            class="btn btn-error btn-sm btn-circle border-none"
                             onclick={"delete_question_modal_" + question.id.toString() + ".showModal()"}
                             on:click={(e) => e.stopPropagation()}
                         >
@@ -438,7 +444,7 @@
                             <form method="dialog">
                                 <button
                                     id={'delete_question_modal_close_button' + question.id.toString()}
-                                    class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+                                    class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><Fa icon={faX} /></button
                                 >
                             </form>
                             <h3 class="font-bold text-lg mb-3">Are you sure?</h3>
@@ -454,44 +460,45 @@
 					<dialog id={'view_question_modal' + question.id.toString()} class="modal">
 						<div class="modal-box w-11/12 max-w-5xl h-50">
 							<div class="flex flex-row w-full h-full">
-								<div class="w-1/2">
+								<div class="w-1/3">
 									<form method="dialog">
 										<button
 											id={'view_question_modal_close_button' + question.id.toString()}
-											class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button
+											class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><Fa icon={faX} /></button
 										>
 									</form>
 									<div class="text-lg font-bold">Question</div>
-									<div class="w-full flex flex-row">
-										<input class="ml-5 p-2 rounded-lg" type="text" bind:value={editQuestionText} />
+									<div class="w-full flex flex-col">
+										<input class="p-2 my-2 font-bold text-xl rounded-lg w-full border-2 border-solid border-primary" type="text" bind:value={editQuestionText} />
 										<button
 											on:click={sendUpdateQuestionRequest}
-											class="ml-3 btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+											class="btn btn-primary w-full text-white p-1 text-lg rounded-lg"
+                                            style="text-transform: none;"
 										>
 											Submit
 										</button>
 									</div>
-									<div class="flex flex-row justify-start items-center py-2">
+									<div class="flex w-full flex-row justify-between items-center py-2">
 										<div class="text-lg font-bold">Answers</div>
 										<button
-											class="btn ml-3 bg-slate-200 hover:bg-slate-300 transition btn-sm btn-circle text-2xl text-black border-none"
+											class="btn btn-primary ml-3 transition btn-sm btn-circle text-lg text-white border-none"
 											on:click={() => {
 												isCreateAnswerView = true;
 												createAnswerText = '';
-											}}>+</button
+											}}><Fa icon={faPlus} /></button
 										>
 									</div>
 									{#each question.answers as answer}
 										<!-- svelte-ignore a11y-click-events-have-key-events -->
 										<!-- svelte-ignore a11y-no-static-element-interactions -->
 										<div
-											class="flex flex-row w-fit bg-secondary hover:bg-secondary-focus transition hover:cursor-pointer rounded-full p-3 my-1 ml-5"
+											class="flex flex-row text-white justify-between w-full items-center bg-primary hover:bg-primary-focus transition hover:cursor-pointer rounded-full p-3 my-1 {editAnswer !== undefined && answer.id == editAnswer.id ? 'border-4 border-solid border-secondary' : ''}"
 											on:click={() => {
 												isCreateAnswerView = false;
 												editAnswer = answer;
 											}}
 										>
-											<div>{answer.text}</div>
+											<div class="font-bold text-lg ml-2">{answer.text}</div>
                                             <button
                                                 class="btn ml-8 btn-error btn-xs btn-circle border-none"
                                                 on:click={() => sendDeleteAnswerRequest(answer.id)}
@@ -499,31 +506,32 @@
 										</div>
 									{/each}
 								</div>
-								<div class="w-1/2">
+								<div class="w-2/3 px-4">
 									{#if isCreateAnswerView}
 										<div class="text-lg font-bold">Add new answer</div>
 										<input
-											class="ml-5 p-2 rounded-lg"
+											class="p-2 my-2 rounded-lg text-lg font-bold w-full border-2 border-solid border-primary"
 											type="text"
-											placeholder="Enter your answer :)"
+											placeholder="Enter your answer"
 											bind:value={createAnswerText}
 										/>
 										<button
 											on:click={sendCreateAnswerRequest}
-											class="ml-3 btn-neutral bg-slate-200 text-black p-1 rounded-lg hover:btn-active hover:text-white transition"
+											class="w-full btn btn-primary text-white p-2 rounded-lg hover:btn-primary-foxus"
 										>
 											Submit
 										</button>
 									{:else}
-                                        {#if editAnswer !== undefined }
+                                        {#if editAnswer !== undefined}
                                             <div class="text-lg font-bold">Answer: {editAnswer?.text}</div>
                                             {#each editAnswer.categoryWeights as categoryWeight}
                                                 <div class="my-2 flex flex-col">
                                                     <div class="flex flex-row w-full">
-                                                        <div class="w-1/2 flex items-center">{categoryWeight.category.name}</div>
-                                                        <input class="w-1/4 rounded-lg p-2 text-center text-lg" type="number" bind:value={categoryWeight.weight} />
+                                                        <div class="w-1/2 flex items-center font-bold text-lg justify-center bg-primary text-white rounded-lg">{categoryWeight.category.name}</div>
+                                                        <input class="w-1/4 ml-1 p-2 rounded-lg text-center text-lg border-2 border-solid border-primary" type="number" bind:value={categoryWeight.weight} />
                                                         <button
-                                                            class="btn-neutral bg-slate-200 text-black p-3 w-1/4 ml-1 rounded-lg hover:btn-active hover:text-white transition"
+                                                            class="btn btn-primary text-white text-lg font-bold p-3 w-1/4 ml-1 rounded-lg hover:btn-primary-focus"
+                                                            style="text-transform: none;"
                                                             on:click={() => sendUpdateAnswerCategoryWeightRequest(categoryWeight.id, categoryWeight.weight)}
                                                         >
                                                             Submit

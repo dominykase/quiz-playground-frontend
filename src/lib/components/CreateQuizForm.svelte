@@ -28,19 +28,21 @@
 	};
 </script>
 
-<div class="floating-animation card card-normal bg-secondary rounded-xl">
+<div class="card card-normal bg-white rounded-none border-2 border-solid border-primary">
 	<div class="card-body flex items-center flex-col">
-		<CardTitle text="Create a quiz :]" />
+		<CardTitle text="Create a quiz" />
 		<input
 			type="text"
 			bind:value={name}
 			placeholder="Title"
-			class="mb-2 p-2 h-10 w-80 rounded-lg"
+			class="mb-2 p-2 h-10 w-80 rounded-lg border-2 border-solid border-primary"
 		/>
-		<textarea bind:value={description} placeholder="Description" class="p-2 h-32 w-80 rounded-lg" />
+		<textarea bind:value={description} placeholder="Description" class="p-2 h-32 w-80 rounded-lg border-2 border-solid border-primary" />
 		<button
 			on:click={submitQuiz}
-			class="btn-neutral bg-white hover:bg-active mt-1 py-2 px-5 rounded-full text-black hover:text-white"
+			class="btn btn-primary hover:bg-primary-focus mt-1 py-2 px-5 w-full rounded-lg text-white transition text-lg"
+            style="text-transform: none;"
+            disabled={name === '' || description === ''}
 			>Create</button
 		>
 	</div>
