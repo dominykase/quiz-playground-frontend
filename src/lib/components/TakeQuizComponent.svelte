@@ -120,7 +120,7 @@
         </div>
     </div>
 {:else}
-    <div class="w-1/2">
+    <div class="w-1/2 h-full">
         <div class="my-6 p-3 text-2xl border-b-primary border-solid border-b-8">
             Quiz completed! Here is how you scored in each category:
         </div>
