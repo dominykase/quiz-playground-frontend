@@ -2,6 +2,7 @@
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { PUBLIC_API_URL } from '$env/static/public';
+	import Header from '$lib/components/Header.svelte';
 	import QuizOverviewComponent from '$lib/components/QuizOverviewComponent.svelte';
 	import type { Quiz } from '$lib/types/Quiz';
 	import axios from 'axios';
@@ -31,5 +32,8 @@
 {#if quiz == undefined}
 	<div class="spinner" />
 {:else}
-	<QuizOverviewComponent {quiz} />
+    <div class="w-full h-full flex flex-col items-center overflow-y-scroll">
+        <Header />
+	    <QuizOverviewComponent {quiz} />
+    </div>
 {/if}

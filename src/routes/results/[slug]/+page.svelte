@@ -2,6 +2,7 @@
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { PUBLIC_API_URL } from '$env/static/public';
+	import Header from '$lib/components/Header.svelte';
 	import ResultsOverviewComponent from '$lib/components/ResultsOverviewComponent.svelte';
 	import type { Quiz } from '$lib/types/Quiz';
     import type { ResultsOverview } from '$lib/types/results/ResultsOverview';
@@ -45,5 +46,8 @@
 {#if quiz == undefined || results == undefined}
 	<div class="spinner" />
 {:else}
-    <ResultsOverviewComponent {quiz} {results} />
+    <div class="w-full h-full flex flex-col items-center overflow-y-scroll">
+        <Header />
+        <ResultsOverviewComponent {quiz} {results} />
+    </div>
 {/if}
